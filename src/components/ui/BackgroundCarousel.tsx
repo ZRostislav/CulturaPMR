@@ -24,76 +24,104 @@ const items = [
 ];
 
 export default function BackgroundCarousel() {
-  const duplicated = [...items, ...items];
   const sliderRef = useRef<HTMLDivElement>(null);
-
+  const translateRef = useRef(0);
   const [translateX, setTranslateX] = useState(0);
+
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showText, setShowText] = useState(false);
 
-  const speed = 0.3;
+  const speed = 1.5;
 
-  // Анимация ленты
+  // только 2 набора — идеальная бесконечная лента
+  const duplicated = [
+    ...items,
+    ...items,
+    ...items,
+    ...items,
+    ...items,
+    ...items,
+  ];
+
   useEffect(() => {
-    let animationFrame: number;
+    let frame: number;
+
     const animate = () => {
-      if (activeIndex === null && sliderRef.current) {
-        const maxTranslate = sliderRef.current.scrollWidth / 2;
-        setTranslateX((prev) => {
-          const newX = prev - speed;
-          return newX <= -maxTranslate ? 0 : newX;
-        });
+      if (activeIndex !== null) {
+        frame = requestAnimationFrame(animate);
+        return;
       }
-      animationFrame = requestAnimationFrame(animate);
+
+      if (!sliderRef.current) {
+        frame = requestAnimationFrame(animate);
+        return;
+      }
+
+      const containerWidth = sliderRef.current.clientWidth;
+      const itemWidth = containerWidth / 4;
+      const loopWidth = itemWidth * (duplicated.length / 2); // ширина половины ленты
+
+      translateRef.current -= speed;
+
+      // Когда полностью прошли одну половину — плавно переносим
+      if (Math.abs(translateRef.current) >= loopWidth) {
+        translateRef.current += loopWidth;
+      }
+
+      setTranslateX(translateRef.current);
+
+      frame = requestAnimationFrame(animate);
     };
+
     animate();
-    return () => cancelAnimationFrame(animationFrame);
+    return () => cancelAnimationFrame(frame);
   }, [activeIndex]);
 
-  // Обработка клика
   const handleClick = (index: number) => {
     if (!sliderRef.current) return;
 
     const containerWidth = sliderRef.current.clientWidth;
     const itemWidth = containerWidth / 4;
 
-    // Теперь используем реальный индекс duplicated
-    const targetTranslateX = -index * itemWidth;
-
-    // плавно двигаем ленту
-    const duration = 500; // мс
-    const start = translateX;
+    const target = -(index * itemWidth);
+    const start = translateRef.current;
+    const duration = 500;
     const startTime = performance.now();
 
     const move = (time: number) => {
-      const elapsed = time - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const newTranslate = start + (targetTranslateX - start) * progress;
-      setTranslateX(newTranslate);
+      const progress = Math.min((time - startTime) / duration, 1);
+      const value = start + (target - start) * progress;
+      translateRef.current = value;
+      setTranslateX(value);
 
       if (progress < 1) requestAnimationFrame(move);
-      else setIsExpanded(true); // после подъезда разворачиваем слайд
+      else {
+        setIsExpanded(true);
+        setTimeout(() => setShowText(true), 300);
+      }
     };
-    requestAnimationFrame(move);
 
-    setActiveIndex(index); // теперь это индекс в duplicated
+    requestAnimationFrame(move);
+    setActiveIndex(index);
   };
 
   const closeText = () => {
+    setShowText(false);
     setIsExpanded(false);
-    setActiveIndex(null);
+    setTimeout(() => setActiveIndex(null), 400);
   };
 
   return (
     <section className="relative w-full h-screen overflow-hidden bg-black">
-      {/* Лента */}
       <div
         ref={sliderRef}
-        className="absolute inset-0 flex transition-transform duration-500 ease-out"
+        className="absolute inset-0 flex"
         style={{ transform: `translateX(${translateX}px)` }}
       >
         {duplicated.map((item, index) => {
           const isActive = index === activeIndex;
+
           return (
             <div
               key={index}
@@ -106,7 +134,7 @@ export default function BackgroundCarousel() {
             >
               <img
                 src={item.img}
-                className="w-full h-full object-cover rounded-xl"
+                className="w-full h-full object-cover"
                 alt=""
               />
             </div>
@@ -114,19 +142,25 @@ export default function BackgroundCarousel() {
         })}
       </div>
 
-      {/* Текст и кнопка */}
-      {activeIndex !== null && isExpanded && (
-        <div className="absolute top-1/2 left-12 -translate-y-1/2 z-30 text-white max-w-lg p-6 bg-black/50 rounded-lg backdrop-blur-sm transition-all duration-700 opacity-100">
+      {activeIndex !== null && (
+        <div
+          className={`absolute top-1/2 left-12 -translate-y-1/2 z-30 text-white max-w-lg p-6 bg-black/40 rounded-lg backdrop-blur-sm transition-all duration-700 ${
+            showText ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-20"
+          }`}
+        >
           <button
             onClick={closeText}
             className="absolute top-2 right-2 text-white text-2xl font-bold"
           >
             ×
           </button>
+
           <h2 className="text-3xl font-bold mb-4">
             {duplicated[activeIndex].title}
           </h2>
+
           <p className="mb-4">{duplicated[activeIndex].description}</p>
+
           <button className="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg">
             Подробнее
           </button>

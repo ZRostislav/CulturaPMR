@@ -11,7 +11,7 @@
   }
 
   .animate-slide-slow {
-    animation: slide-slow 40s linear infinite;
+    animation: slide-slow 80s linear infinite;
   }
 
   .pause-animation {
