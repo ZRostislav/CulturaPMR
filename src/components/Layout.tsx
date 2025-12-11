@@ -1,7 +1,7 @@
-import { Outlet, Link } from 'react-router';
-import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { Outlet, Link } from "react-router";
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 
 export function Layout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,17 +9,17 @@ export function Layout() {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: "smooth" });
       setIsMenuOpen(false);
     }
   };
 
   const navItems = [
-    { label: 'Главная', id: 'hero' },
-    { label: 'О комплексе', id: 'about' },
-    { label: 'Направления', id: 'services' },
-    { label: 'Галерея', id: 'gallery' },
-    { label: 'Контакты', id: 'contacts' },
+    { label: "Главная", id: "hero" },
+    { label: "О комплексе", id: "about" },
+    { label: "Направления", id: "services" },
+    { label: "Галерея", id: "gallery" },
+    { label: "Контакты", id: "contacts" },
   ];
 
   return (
@@ -34,8 +34,8 @@ export function Layout() {
           <div className="flex items-center justify-between">
             <Link to="/" className="text-white">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg"></div>
-                <span>КУЛЬТУРНЫЙ КОМПЛЕКС</span>
+                <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 rounded-lg"></div>
+                <span>Культура.ПМР</span>
               </div>
             </Link>
 
@@ -66,7 +66,7 @@ export function Layout() {
             {isMenuOpen && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
+                animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 className="md:hidden overflow-hidden"
               >
@@ -98,7 +98,7 @@ export function Layout() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg"></div>
+                <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 rounded-lg"></div>
                 <span className="text-white">КУЛЬТУРНЫЙ КОМПЛЕКС</span>
               </div>
               <p className="text-neutral-400">
@@ -109,23 +109,22 @@ export function Layout() {
             <div>
               <h3 className="text-white mb-4">Контакты</h3>
               <div className="text-neutral-400 space-y-2">
-                              <p>Телефон: 0 (552) 2-65-34</p>
-                              <p>Email: yesmilka1994@mail.ru</p>
-                              <p>Адрес:Приднестровье, г. Бендеры, ул. Ленина д. 32</p>
+                <p>Телефон: 0 (552) 2-65-34</p>
+                <p>Email: yesmilka1994@mail.ru</p>
+                <p>Адрес:Приднестровье, г. Бендеры, ул. Ленина д. 32</p>
               </div>
             </div>
 
             <div>
               <h3 className="text-white mb-4">Часы работы</h3>
               <div className="text-neutral-400 space-y-2">
-                              <p>Пн-Вс: с 08:00 до 17:00</p>
-                
+                <p>Пн-Вс: с 08:00 до 17:00</p>
               </div>
             </div>
           </div>
 
           <div className="mt-8 pt-8 border-t border-neutral-800 text-center text-neutral-500">
-            <p>© 2024 Культурный Комплекс. Все права защищены.</p>
+            <p>© 2026 Культура.ПМР. Все права защищены.</p>
           </div>
         </div>
       </footer>
