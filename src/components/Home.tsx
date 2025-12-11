@@ -9,6 +9,7 @@ import {
   Phone,
   Mail,
 } from "lucide-react";
+import BackgroundCarousel from "../components/ui/BackgroundCarousel";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
@@ -70,81 +71,7 @@ export function Home() {
   return (
     <div>
       {/* Hero Section */}
-      <section
-        id="hero"
-        className="relative min-h-screen flex items-center justify-center overflow-hidden"
-      >
-        {/* Background Image */}
-        <div className="absolute inset-0">
-          <img
-            src="https://pridnestrovie-tourism.com/wp-content/uploads/2018/11/dji_0401.jpg"
-            alt="Cultural Center"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-neutral-950/70 via-neutral-950/50 to-neutral-950"></div>
-        </div>
-
-        {/* Content */}
-        <div className="relative container mx-auto px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h1 className="text-white mb-6">
-              Многофункциональный
-              <br />
-              Культурный Комплекс
-            </h1>
-            <p className="text-neutral-300 max-w-2xl mx-auto mb-8">
-              Современное пространство для культурных мероприятий, творческих
-              встреч и вдохновляющих событий в самом сердце города
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() =>
-                  document
-                    .getElementById("contacts")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-                className="px-8 py-3 bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 text-white rounded-lg"
-              >
-                Связаться с нами
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() =>
-                  document
-                    .getElementById("about")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-                className="px-8 py-3 bg-white/10 backdrop-blur-sm text-white rounded-lg border border-white/20"
-              >
-                Узнать больше
-              </motion.button>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Scroll Indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.8 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5 }}
-            className="w-6 h-10 border-2 border-white/30 rounded-full flex items-start justify-center p-2"
-          >
-            <div className="w-1 h-2 bg-white rounded-full"></div>
-          </motion.div>
-        </motion.div>
-      </section>
+      <BackgroundCarousel />
 
       {/* About Section */}
       <section id="about" className="py-24 bg-neutral-900">
