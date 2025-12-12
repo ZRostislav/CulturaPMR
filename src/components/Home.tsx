@@ -264,18 +264,18 @@ export function Home() {
                 <input
                   type="text"
                   placeholder="Ваше имя"
-                  className="px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder:text-neutral-500 focus:outline-none focus:border-purple-500 transition-colors"
+                  className="px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder:text-neutral-500 focus:outline-none focus:border-yellow-500 transition-colors"
                 />
                 <input
                   type="email"
                   placeholder="Ваш email"
-                  className="px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder:text-neutral-500 focus:outline-none focus:border-purple-500 transition-colors"
+                  className="px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder:text-neutral-500 focus:outline-none focus:border-yellow-500 transition-colors"
                 />
               </div>
               <textarea
                 placeholder="Ваше сообщение"
                 rows={4}
-                className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder:text-neutral-500 focus:outline-none focus:border-purple-500 transition-colors resize-none"
+                className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder:text-neutral-500 focus:outline-none focus:border-yellow-500 transition-colors resize-none"
               ></textarea>
               <motion.button
                 whileHover={{ scale: 1.02 }}
