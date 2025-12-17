@@ -32,7 +32,7 @@ export default function BackgroundCarousel() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showText, setShowText] = useState(false);
 
-  const speed = 1.5;
+  const speed = 0.7;
 
   // только 2 набора — идеальная бесконечная лента
   const duplicated = [

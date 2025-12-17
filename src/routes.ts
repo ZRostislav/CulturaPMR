@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router";
 import { Layout } from "./components/Layout";
 import { Home } from "./components/Home";
 import { AdminPage } from "./components/AdminPage";
+import { EventsPage } from "./components/EventsPage";
 
 export const router = createBrowserRouter([
   {
@@ -11,6 +12,7 @@ export const router = createBrowserRouter([
       { index: true, Component: Home },
 
       { path: "admin", Component: AdminPage },
+      { path: "admin/events", Component: EventsPage },
     ],
   },
 ]);
