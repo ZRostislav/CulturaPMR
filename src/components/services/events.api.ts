@@ -1,5 +1,5 @@
 // services/events.api.ts
-import { api } from "../../api.js";
+import api from "../../api.js";
 import API_ROUTES from "../../apiRoutes.js";
 
 export const getAllEvents = async () => {

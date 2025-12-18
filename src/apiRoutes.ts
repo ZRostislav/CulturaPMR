@@ -1,7 +1,9 @@
-// apiRoutes.ts
 const API_ROUTES = {
   AUTH: {
     LOGIN: "/api/auth/login",
+    LOGOUT: "/api/auth/logout",
+    REFRESH: "/api/auth/refresh",
+    CHECK: "/api/auth/check",
   },
   EVENTS: {
     GET_ALL: "/api/events",

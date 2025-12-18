@@ -1,12 +1,17 @@
 import * as React from "react";
 import { useState } from "react";
 import { motion } from "motion/react";
-import { api, API_ROUTES } from "../api";
+import { useNavigate } from "react-router-dom";
+import { AdminIndexRedirect } from "./AdminIndexRedirect";
+import API_ROUTES from "../apiRoutes";
+import api from "../api";
 
 export function AdminPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   const fadeInUp = {
     initial: { opacity: 0, y: 60 },
@@ -15,20 +20,24 @@ export function AdminPage() {
     transition: { duration: 0.6 },
   };
 
+  AdminIndexRedirect();
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError(null);
 
     try {
-      const res = await api.post(API_ROUTES.AUTH.LOGIN, {
-        username,
-        password,
-      });
-
-      localStorage.setItem("token", res.data.token);
-      window.location.href = "/admin/events"; // редирект после успешного логина
-    } catch (err) {
-      setError("Неверный логин или пароль");
+      // вызываем login
+      await api.post(API_ROUTES.AUTH.LOGIN, { username, password });
+      navigate("/admin/events");
+    } catch (err: any) {
+      if (err.response?.data?.message) {
+        setError(`Ошибка: ${err.response.data.message}`);
+      } else if (err.message) {
+        setError(`Ошибка: ${err.message}`);
+      } else {
+        setError("Неизвестная ошибка при входе");
+      }
     }
   };
 
@@ -48,7 +57,11 @@ export function AdminPage() {
       >
         <h2 className="text-white mb-4 text-center text-xl">Вход</h2>
 
-        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+        {error && (
+          <p className="text-red-500 text-sm text-center break-words">
+            {error}
+          </p>
+        )}
 
         <div className="space-y-4">
           <input
