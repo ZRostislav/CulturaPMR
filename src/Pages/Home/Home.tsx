@@ -1,15 +1,7 @@
 import { motion } from "motion/react";
-import {
-  Music,
-  Theater,
-  Palette,
-  Users,
-  Calendar,
-  MapPin,
-  Phone,
-  Mail,
-} from "lucide-react";
-import BackgroundCarousel from "../components/ui/BackgroundCarousel";
+import { Users, Calendar, MapPin, Phone, Mail } from "lucide-react";
+import BackgroundCarousel from "../../shared/ui/BackgroundCarousel";
+import ListEvents from "../../shared/ui/ListEvents";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
@@ -25,40 +17,6 @@ const staggerContainer = {
 };
 
 export function Home() {
-  const services = [
-    {
-      icon: <Theater size={32} />,
-      title: "Театральный зал",
-      description:
-        "Современная сцена для театральных постановок и концертных выступлений",
-      image:
-        "https://images.unsplash.com/photo-1761502479994-3a5e07ec243e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjB0aGVhdGVyJTIwaGFsbHxlbnwxfHx8fDE3NjU0NDExMjJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
-    },
-    {
-      icon: <Music size={32} />,
-      title: "Концертный зал",
-      description:
-        "Профессиональная акустика для музыкальных мероприятий любого формата",
-      image:
-        "https://images.unsplash.com/photo-1631552256073-6556ced1cf15?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb25jZXJ0JTIwaGFsbCUyMGludGVyaW9yfGVufDF8fHx8MTc2NTQ0MTEyM3ww&ixlib=rb-4.1.0&q=80&w=1080",
-    },
-    {
-      icon: <Palette size={32} />,
-      title: "Выставочная галерея",
-      description: "Просторные залы для художественных выставок и экспозиций",
-      image:
-        "https://images.unsplash.com/photo-1643820509303-79e98ac7e006?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcnQlMjBnYWxsZXJ5JTIwbXVzZXVtfGVufDF8fHx8MTc2NTQ0MTEyM3ww&ixlib=rb-4.1.0&q=80&w=1080",
-    },
-    {
-      icon: <Users size={32} />,
-      title: "Конференц-залы",
-      description:
-        "Оборудованные пространства для деловых встреч и мероприятий",
-      image:
-        "https://images.unsplash.com/photo-1762780088259-568641a105ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjdWx0dXJhbCUyMGNlbnRlciUyMGJ1aWxkaW5nfGVufDF8fHx8MTc2NTQ0MTEyNHww&ixlib=rb-4.1.0&q=80&w=1080",
-    },
-  ];
-
   const galleryImages = [
     "https://images.unsplash.com/photo-1764936394584-c4a66ac31e00?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0aGVhdGVyJTIwcGVyZm9ybWFuY2UlMjBzdGFnZXxlbnwxfHx8fDE3NjU0MzQ4NDl8MA&ixlib=rb-4.1.0&q=80&w=1080",
     "https://images.unsplash.com/photo-1695067440629-b5e513976100?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcmNoaXRlY3R1cmUlMjBidWlsZGluZ3xlbnwxfHx8fDE3NjUzNDE5MzZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
@@ -69,11 +27,9 @@ export function Home() {
   ];
 
   return (
-    <div>
-      {/* Hero Section */}
+    <div id="hero">
       <BackgroundCarousel />
 
-      {/* About Section */}
       <section id="about" className="py-24 bg-neutral-900">
         <div className="container mx-auto px-6">
           <motion.div
@@ -124,52 +80,8 @@ export function Home() {
         </div>
       </section>
 
-      {/* Services Section */}
-      <section id="services" className="py-24 bg-neutral-950">
-        <div className="container mx-auto px-6">
-          <motion.div {...fadeInUp} className="text-center mb-16">
-            <h2 className="text-white mb-4">Наши направления</h2>
-            <p className="text-neutral-400 max-w-2xl mx-auto">
-              Разнообразие пространств для реализации любых культурных и деловых
-              проектов
-            </p>
-          </motion.div>
+      <ListEvents />
 
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            whileInView="whileInView"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8"
-          >
-            {services.map((service, index) => (
-              <motion.div
-                key={index}
-                variants={fadeInUp}
-                whileHover={{ y: -10 }}
-                className="group relative overflow-hidden rounded-2xl bg-neutral-900 border border-neutral-800"
-              >
-                <div className="aspect-video overflow-hidden">
-                  <img
-                    src={service.image}
-                    alt={service.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                </div>
-                <div className="p-6">
-                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center mb-4 text-white">
-                    {service.icon}
-                  </div>
-                  <h3 className="text-white mb-2">{service.title}</h3>
-                  <p className="text-neutral-400">{service.description}</p>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Gallery Section */}
       <section id="gallery" className="py-24 bg-neutral-900">
         <div className="container mx-auto px-6">
           <motion.div {...fadeInUp} className="text-center mb-16">
@@ -204,7 +116,6 @@ export function Home() {
         </div>
       </section>
 
-      {/* Contacts Section */}
       <section id="contacts" className="py-24 bg-neutral-950">
         <div className="container mx-auto px-6">
           <motion.div {...fadeInUp} className="text-center mb-16">

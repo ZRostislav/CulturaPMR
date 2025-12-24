@@ -17,7 +17,7 @@ export function Layout() {
   const navItems = [
     { label: "Главная", id: "hero" },
     { label: "О комплексе", id: "about" },
-    { label: "Направления", id: "services" },
+    { label: "Мероприятия", id: "listEvents" },
     { label: "Галерея", id: "gallery" },
     { label: "Контакты", id: "contacts" },
   ];
@@ -99,7 +99,7 @@ export function Layout() {
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 via-yellow-500 to-yellow-600 rounded-lg"></div>
-                <span className="text-white">КУЛЬТУРНЫЙ КОМПЛЕКС</span>
+                <span className="text-white">Культура.ПМР</span>
               </div>
               <p className="text-neutral-400">
                 Пространство для культуры, творчества и вдохновения
@@ -111,7 +111,7 @@ export function Layout() {
               <div className="text-neutral-400 space-y-2">
                 <p>Телефон: 0 (552) 2-65-34</p>
                 <p>Email: yesmilka1994@mail.ru</p>
-                <p>Адрес:Приднестровье, г. Бендеры, ул. Ленина д. 32</p>
+                <p>Адрес: Приднестровье, г. Бендеры, ул. Ленина д. 32</p>
               </div>
             </div>
 
