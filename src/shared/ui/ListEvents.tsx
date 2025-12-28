@@ -134,7 +134,7 @@ export default function ListEvents() {
               <div className="flex flex-col gap-4">
                 <div className="flex justify-between items-end">
                   <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">
-                    Локация / Выберите город
+                    Город
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -142,7 +142,7 @@ export default function ListEvents() {
                     <button
                       key={city}
                       onClick={() => setFilters((f) => ({ ...f, city }))}
-                      className={`px-4 py-2 md:px-5 md:py-2 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-wider transition-all duration-300 border ${
+                      className={`px-4 cursor-pointer py-2 md:px-5 md:py-2 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-wider transition-all duration-300 border ${
                         filters.city === city
                           ? "bg-yellow-500 border-yellow-500 text-black shadow-[0_0_20px_rgba(234,179,8,0.3)]"
                           : "bg-white/5 border-white/10 text-white/60 hover:border-white/30"
@@ -160,9 +160,9 @@ export default function ListEvents() {
                           city: "all",
                         })
                       }
-                      className="group flex items-center gap-2 px-3 py-1.5 bg-orange-500/10 hover:bg-orange-500/20 text-orange-500 rounded-full transition-all duration-300"
+                      className="group cursor-pointer flex items-center gap-2 px-3 py-1.5 bg-orange-500/10 hover:bg-orange-500/20 text-orange-500 rounded-full transition-all duration-300"
                     >
-                      <span className="text-[10px] font-bold uppercase tracking-widest">
+                      <span className="text-[10px]  font-bold uppercase tracking-widest">
                         Сбросить
                       </span>
                       <svg

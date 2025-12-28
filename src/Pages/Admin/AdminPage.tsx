@@ -29,7 +29,7 @@ export function AdminPage() {
     try {
       // вызываем login
       await api.post(API_ROUTES.AUTH.LOGIN, { username, password });
-      navigate("/admin/events");
+      navigate("/admin/controls");
     } catch (err: any) {
       if (err.response?.data?.message) {
         setError(`Ошибка: ${err.response.data.message}`);

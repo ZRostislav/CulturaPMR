@@ -1,18 +1,38 @@
-import { Outlet, Link } from "react-router";
+import { Outlet, Link, useNavigate, useLocation } from "react-router";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
 export function Layout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [pendingScroll, setPendingScroll] = useState<string | null>(null);
 
   const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-      setIsMenuOpen(false);
+    if (location.pathname !== "/") {
+      setPendingScroll(id);
+      navigate("/");
+    } else {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
     }
+    setIsMenuOpen(false);
   };
+
+  useEffect(() => {
+    if (location.pathname === "/" && pendingScroll) {
+      const element = document.getElementById(pendingScroll);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      }
+      setPendingScroll(null);
+    }
+  }, [location.pathname, pendingScroll]);
 
   const navItems = [
     { label: "Главная", id: "hero" },
@@ -45,7 +65,7 @@ export function Layout() {
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className="text-neutral-300 hover:text-white transition-colors"
+                  className="text-neutral-300 hover:text-white transition-colors cursor-pointer"
                 >
                   {item.label}
                 </button>
@@ -124,7 +144,9 @@ export function Layout() {
           </div>
 
           <div className="mt-8 pt-8 border-t border-neutral-800 text-center text-neutral-500">
-            <p>© 2026 Культура.ПМР. Все права защищены.</p>
+            <p>
+              © {new Date().getFullYear()} Культура.ПМР. Все права защищены.
+            </p>
           </div>
         </div>
       </footer>
