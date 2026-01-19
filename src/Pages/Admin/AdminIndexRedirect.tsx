@@ -12,7 +12,7 @@ export const AdminIndexRedirect = () => {
         // 🔄 Пытаемся обновить accessToken через refresh
         await api.post(API_ROUTES.AUTH.REFRESH);
         // если refresh валиден — редирект на /admin/events
-        navigate("/admin/controls", { replace: true });
+        navigate("/admin/events", { replace: true });
       } catch {
         // если нет токена или недействительный — остаёмся на странице логина
       }
