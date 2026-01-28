@@ -1,18 +1,38 @@
-import { Outlet, Link } from "react-router";
+import { Outlet, Link, useNavigate, useLocation } from "react-router";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
 export function Layout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [pendingScroll, setPendingScroll] = useState<string | null>(null);
 
   const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-      setIsMenuOpen(false);
+    if (location.pathname !== "/") {
+      setPendingScroll(id);
+      navigate("/");
+    } else {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
     }
+    setIsMenuOpen(false);
   };
+
+  useEffect(() => {
+    if (location.pathname === "/" && pendingScroll) {
+      const element = document.getElementById(pendingScroll);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      }
+      setPendingScroll(null);
+    }
+  }, [location.pathname, pendingScroll]);
 
   const navItems = [
     { label: "Главная", id: "hero" },
@@ -34,10 +54,10 @@ export function Layout() {
             {/* Увеличенный Логотип и Название */}
             <Link to="/" className="text-white group flex items-center gap-4">
               <div className="relative">
-                <img 
-                  src="/MKK.png" 
-                  alt="Лого" 
-                  className="w-12 h-12 md:w-16 md:h-16 object-contain transition-transform group-hover:scale-110" 
+                <img
+                  src="/MKK.png"
+                  alt="Лого"
+                  className="w-12 h-12 md:w-16 md:h-16 object-contain transition-transform group-hover:scale-110"
                 />
                 <div className="absolute -inset-1 bg-yellow-500/20 blur-lg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
@@ -65,7 +85,10 @@ export function Layout() {
             </div>
 
             {/* Mobile Menu Toggle */}
-            <button className="lg:hidden text-white p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            <button
+              className="lg:hidden text-white p-2"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
               {isMenuOpen ? <X size={32} /> : <Menu size={32} />}
             </button>
           </div>
@@ -103,14 +126,22 @@ export function Layout() {
       {/* Footer */}
       <footer className="bg-black border-t border-neutral-900 relative overflow-hidden py-20">
         <div className="absolute top-0 right-0 w-1/2 h-full opacity-[0.02] pointer-events-none">
-          <img src="/MKK.png" alt="" className="w-full h-full object-contain translate-x-1/3 scale-150 blur-xl" />
+          <img
+            src="/MKK.png"
+            alt=""
+            className="w-full h-full object-contain translate-x-1/3 scale-150 blur-xl"
+          />
         </div>
 
         <div className="relative z-10 container mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-start gap-16">
             <div className="max-w-md">
               <div className="flex items-center gap-5 mb-8">
-                <img src="/MKK.png" alt="Лого" className="w-20 h-20 object-contain" />
+                <img
+                  src="/MKK.png"
+                  alt="Лого"
+                  className="w-20 h-20 object-contain"
+                />
                 <div className="flex flex-col">
                   <span className="text-white text-2xl font-black uppercase leading-tight">
                     Многофункциональный
@@ -131,8 +162,12 @@ export function Layout() {
                   Связь
                 </h3>
                 <div className="text-neutral-400 space-y-4 text-lg">
-                  <p className="hover:text-yellow-500 transition-colors cursor-pointer">0 (552) 2-65-34</p>
-                  <p className="hover:text-yellow-500 transition-colors cursor-pointer">yesmilka1994@mail.ru</p>
+                  <p className="hover:text-yellow-500 transition-colors cursor-pointer">
+                    0 (552) 2-65-34
+                  </p>
+                  <p className="hover:text-yellow-500 transition-colors cursor-pointer">
+                    -
+                  </p>
                   <p>г. Бендеры, ул. Ленина, д. 32</p>
                 </div>
               </div>
@@ -142,15 +177,20 @@ export function Layout() {
                   Режим работы
                 </h3>
                 <div className="text-neutral-400 space-y-2 text-lg">
-                  <p className="text-white font-bold text-2xl">08:00 – 17:00</p>
-                  <p className="text-yellow-500/60 uppercase text-xs tracking-[0.3em]">Ежедневно без выходных</p>
+                  <p className="text-white font-bold text-2xl">08:00 – 20:00</p>
+                  <p className="text-yellow-500/60 uppercase text-xs tracking-[0.3em]">
+                    Ежедневно без выходных
+                  </p>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="mt-20 pt-8 border-t border-neutral-900 flex flex-col md:flex-row justify-between items-center gap-4 text-neutral-600 text-xs uppercase tracking-widest">
-            <p>© {new Date().getFullYear()} Многофункциональный Культурный Комплекс</p>
+            <p>
+              © {new Date().getFullYear()} Многофункциональный Культурный
+              Комплекс
+            </p>
             <p>г. Бендеры</p>
           </div>
         </div>

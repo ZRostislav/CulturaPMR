@@ -1,6 +1,5 @@
-// api.ts
+// api/api.ts
 import axios from "axios";
-import API_ROUTES from "./apiRoutes";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -33,11 +32,11 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        await api.post(API_ROUTES.AUTH.REFRESH);
+        // ❗ ВАЖНО: хардкод тут допустим
+        await api.post("/api/auth/refresh");
         runQueue();
         return api(originalRequest);
       } catch {
-        console.log("❌ Сессия умерла → /");
         window.location.href = "/";
         return Promise.reject(error);
       } finally {
@@ -46,7 +45,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../api/api";
-import API_ROUTES from "../../api/apiRoutes";
+import { authApi } from "../../components/services/auth.api";
 
 export const AdminIndexRedirect = () => {
   const navigate = useNavigate();
@@ -10,9 +9,9 @@ export const AdminIndexRedirect = () => {
     const checkAuth = async () => {
       try {
         // 🔄 Пытаемся обновить accessToken через refresh
-        await api.post(API_ROUTES.AUTH.REFRESH);
+        await authApi.refresh();
         // если refresh валиден — редирект на /admin/events
-        navigate("/admin/events", { replace: true });
+        navigate("/admin/controls", { replace: true });
       } catch {
         // если нет токена или недействительный — остаёмся на странице логина
       }
