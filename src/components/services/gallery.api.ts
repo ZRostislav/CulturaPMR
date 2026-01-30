@@ -4,18 +4,25 @@ import api from "../../api/api";
 export type GalleryDTO = {
   id: number;
   image: string;
+  description: string | null;
 };
 
 export type CreateGalleryPayload = {
-  imageFile: File;
+  imageFile?: File; // ← теперь не обязателен (для update)
+  description?: string;
 };
 
 /* ========= Helpers ========= */
 const buildGalleryFormData = (data: CreateGalleryPayload) => {
   const formData = new FormData();
 
-  // Только file → multer
-  formData.append("image", data.imageFile);
+  if (data.imageFile) {
+    formData.append("image", data.imageFile);
+  }
+
+  if (data.description !== undefined) {
+    formData.append("description", data.description);
+  }
 
   return formData;
 };
@@ -36,6 +43,10 @@ export const galleryApi = {
 
   /* ========= CREATE ========= */
   create: async (payload: CreateGalleryPayload): Promise<void> => {
+    if (!payload.imageFile) {
+      throw new Error("imageFile is required");
+    }
+
     const formData = buildGalleryFormData(payload);
     await api.post("/api/gallery", formData);
   },
