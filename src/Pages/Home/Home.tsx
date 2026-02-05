@@ -8,47 +8,87 @@ const fadeInUp = {
   initial: { opacity: 0, y: 40 },
   whileInView: { opacity: 1, y: 0 },
   transition: { duration: 0.6 },
-  viewport: { once: true }, // 👈 ВАЖНО
+  viewport: { once: true },
 };
-// Компонент снега (редкий и мелкий)
-const Snowfall = () => {
-  const snowflakes = Array.from({ length: 30 });
+
+const StageLights = () => {
+  // Создаем 12 случайных бликов
+  const flares = Array.from({ length: 42 });
+
   return (
-    <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
-      {snowflakes.map((_, i) => {
-        const size = Math.random() * 3 + 2;
+    <div className="fixed inset-0 pointer-events-none z-10 overflow-hidden">
+      
+   
+
+     
+
+      {/* --- РЕДКИЕ ВОЗНИКАЮЩИЕ БЛИКИ (ИСКРЫ) --- */}
+      {flares.map((_, i) => {
+        const size = Math.random() * 4 + 2; // Разный размер искр
         const left = Math.random() * 100;
-        const duration = Math.random() * 12 + 10;
-        const delay = Math.random() * 8;
+        const top = Math.random() * 100;
+        const duration = 5 + Math.random() * 10;
+        const delay = Math.random() * 20;
+
         return (
           <motion.div
             key={i}
-            initial={{ y: -20, x: `${left}vw`, opacity: 0 }}
+            initial={{ opacity: 0, scale: 0 }}
             animate={{
-              y: "110vh",
-              x: `${left + (Math.random() * 4 - 2)}vw`,
-              opacity: [0, 0.5, 0.5, 0],
+              opacity: [0, 0.4, 0], // Плавно появляется и исчезает
+              scale: [0, 1.5, 0],
+              y: [0, -40, -80],    // Медленно плывет вверх
             }}
-            transition={{ duration, repeat: Infinity, ease: "linear", delay }}
+            transition={{
+              duration,
+              repeat: Infinity,
+              delay,
+              ease: "easeInOut",
+            }}
+            className="absolute rounded-full"
             style={{
-              position: "absolute",
+              left: `${left}%`,
+              top: `${top}%`,
               width: size,
               height: size,
-              backgroundColor: "white",
-              borderRadius: "50%",
+              backgroundColor: "rgba(234, 179, 8, 0.6)", // Золотистый цвет блика
+              boxShadow: "0 0 10px rgba(234, 179, 8, 0.8)",
               filter: "blur(1px)",
             }}
           />
         );
       })}
+
+      {/* --- НИЖНИЕ АКЦЕНТЫ --- */}
+      <motion.div
+        animate={{ opacity: [0.2, 0.4, 0.2] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-[-5%] left-[-2%] h-[40vh] w-[20vw]" 
+        style={{
+          background: "radial-gradient(circle at bottom left, rgba(234, 179, 8, 0.4) 0%, transparent 70%)",
+          filter: "blur(50px)",
+        }}
+      />
+
+      <motion.div
+        animate={{ opacity: [0.2, 0.4, 0.2] }}
+        transition={{ duration: 11, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        className="absolute bottom-[-5%] right-[-2%] h-[40vh] w-[20vw]"
+        style={{
+          background: "radial-gradient(circle at bottom right, rgba(234, 179, 8, 0.4) 0%, transparent 70%)",
+          filter: "blur(50px)",
+        }}
+      />
     </div>
   );
 };
 
 export function Home() {
   return (
-    <div id="hero" className="relative">
-      <Snowfall />
+    <div id="hero" className="relative bg-neutral-950">
+      {/* Теперь здесь Софиты вместо Снега */}
+      <StageLights />
+      
       <BackgroundCarousel />
 
       {/* Список мероприятий */}
@@ -73,7 +113,8 @@ export function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {/* Сетка с карточками контактов */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-16">
             <motion.div
               variants={fadeInUp}
               className="bg-neutral-900/40 p-10 rounded-3xl border border-neutral-800 text-center hover:border-yellow-500/30 transition-colors"
@@ -109,6 +150,10 @@ export function Home() {
               </p>
             </motion.div>
           </div>
+
+        
+           
+
         </div>
       </section>
     </div>

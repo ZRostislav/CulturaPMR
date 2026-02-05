@@ -41,6 +41,39 @@ export function Layout() {
     { label: "Контакты", id: "contacts" },
   ];
 
+  // Компонент соцсетей (вынесен, чтобы использовать и в десктоп, и в мобильной версии)
+  const SocialIcons = ({ isMobile = false }) => (
+    <div className={`flex items-center gap-4 ${isMobile ? "justify-center mt-8" : ""}`}>
+      {/* YouTube */}
+      <a
+        href="https://youtube.com/@mkk_bendery_pmr"
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`group ${isMobile ? "p-4" : "p-2"} bg-neutral-900/40 rounded-xl border border-yellow-500/20 transition-all duration-300 hover:border-yellow-500 hover:bg-yellow-500/5 hover:shadow-[0_0_15px_rgba(234,179,8,0.2)]`}
+      >
+        <img
+          src="/img1.png"
+          alt="YouTube"
+          className={`${isMobile ? "w-8 h-8" : "w-5 h-5"} object-contain transition-transform duration-300 group-hover:scale-110`}
+        />
+      </a>
+
+      {/* Instagram */}
+      <a
+        href="https://www.instagram.com/mkk_bendery_pmr"
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`group ${isMobile ? "p-4" : "p-2"} bg-neutral-900/40 rounded-xl border border-yellow-500/20 transition-all duration-300 hover:border-yellow-500 hover:bg-yellow-500/5 hover:shadow-[0_0_15px_rgba(234,179,8,0.2)]`}
+      >
+        <img
+          src="/img2.png"
+          alt="Instagram"
+          className={`${isMobile ? "w-8 h-8" : "w-5 h-5"} object-contain transition-transform duration-300 group-hover:scale-110`}
+        />
+      </a>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-neutral-950 flex flex-col justify-between">
       {/* Header */}
@@ -51,7 +84,7 @@ export function Layout() {
       >
         <nav className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            {/* Увеличенный Логотип и Название */}
+            {/* Логотип и Название */}
             <Link to="/" className="text-white group flex items-center gap-4">
               <div className="relative">
                 <img
@@ -71,17 +104,26 @@ export function Layout() {
               </div>
             </Link>
 
-            {/* Desktop Nav */}
-            <div className="hidden lg:flex items-center gap-10">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => scrollToSection(item.id)}
-                  className="text-neutral-400 hover:text-white transition-colors text-xs font-bold uppercase tracking-[0.2em]"
-                >
-                  {item.label}
-                </button>
-              ))}
+            {/* Правая часть: Навигация + Соцсети (Desktop) */}
+            <div className="hidden lg:flex items-center gap-8">
+              {/* Desktop Nav */}
+              <div className="flex items-center gap-8">
+                {navItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => scrollToSection(item.id)}
+                    className="text-neutral-400 hover:text-white transition-colors text-xs font-bold uppercase tracking-[0.2em]"
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Разделитель */}
+              <div className="h-6 w-px bg-neutral-800" />
+
+              {/* Соцсети в шапке */}
+              <SocialIcons />
             </div>
 
             {/* Mobile Menu Toggle */}
@@ -113,6 +155,9 @@ export function Layout() {
                     {item.label}
                   </button>
                 ))}
+                
+                {/* Соцсети в мобильном меню */}
+                <SocialIcons isMobile={true} />
               </div>
             </motion.div>
           )}
