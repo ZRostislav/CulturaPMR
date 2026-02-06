@@ -43,7 +43,9 @@ export function Layout() {
 
   // Компонент соцсетей (вынесен, чтобы использовать и в десктоп, и в мобильной версии)
   const SocialIcons = ({ isMobile = false }) => (
-    <div className={`flex items-center gap-4 ${isMobile ? "justify-center mt-8" : ""}`}>
+    <div
+      className={`flex items-center gap-4 ${isMobile ? "justify-center mt-8" : ""}`}
+    >
       {/* YouTube */}
       <a
         href="https://youtube.com/@mkk_bendery_pmr"
@@ -155,7 +157,7 @@ export function Layout() {
                     {item.label}
                   </button>
                 ))}
-                
+
                 {/* Соцсети в мобильном меню */}
                 <SocialIcons isMobile={true} />
               </div>
@@ -222,7 +224,7 @@ export function Layout() {
                   Режим работы
                 </h3>
                 <div className="text-neutral-400 space-y-2 text-lg">
-                  <p className="text-white font-bold text-2xl">08:00 – 20:00</p>
+                  <p className="text-white font-bold text-2xl">10:00 – 20:00</p>
                   <p className="text-yellow-500/60 uppercase text-xs tracking-[0.3em]">
                     Ежедневно без выходных
                   </p>

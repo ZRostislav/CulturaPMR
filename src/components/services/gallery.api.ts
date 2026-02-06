@@ -2,12 +2,15 @@
 import api from "../../api/api";
 
 /* ========= Types ========= */
+export type MediaType = "image" | "video";
+
 export type GalleryDTO = {
   id: number;
   image: string;
   description: string | null;
   album_id: number | null;
   created_at?: string;
+  media_type: MediaType;
 };
 
 export type CreateGalleryPayload = {

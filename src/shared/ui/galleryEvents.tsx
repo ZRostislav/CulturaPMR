@@ -1,3 +1,4 @@
+// galleryEvents.tsx
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -6,6 +7,7 @@ import {
   ChevronRight,
   Layers,
   Image as ImageIcon,
+  Fullscreen,
 } from "lucide-react";
 import { galleryApi, GalleryDTO } from "../../components/services/gallery.api";
 import { albumsApi, AlbumDTO } from "../../components/services/albums.api";
@@ -24,7 +26,7 @@ const fadeInUp = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: "easeOut" },
+    transition: { duration: 0.6, ease: "easeInOut" },
   },
 };
 
@@ -45,33 +47,47 @@ function AlbumCover({
   images: GalleryDTO[];
   resolveImageUrl: (p?: string | null) => string;
 }) {
+  const Media = ({
+    item,
+    className = "",
+  }: {
+    item: GalleryDTO;
+    className?: string;
+  }) =>
+    item.media_type === "video" ? (
+      <video
+        src={resolveImageUrl(item.image)}
+        className={`w-full h-full object-cover ${className}`}
+        muted
+        playsInline
+        preload="metadata"
+      />
+    ) : (
+      <img
+        src={resolveImageUrl(item.image)}
+        className={`w-full h-full object-cover ${className}`}
+        loading="lazy"
+      />
+    );
+
   if (images.length === 0) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center text-neutral-600 gap-2">
         <ImageIcon size={32} className="opacity-50" />
-        <span className="text-xs">Нет фото</span>
+        <span className="text-xs">Нет медиа</span>
       </div>
     );
   }
 
   if (images.length === 1) {
-    return (
-      <img
-        src={resolveImageUrl(images[0].image)}
-        className="w-full h-full object-cover"
-      />
-    );
+    return <Media item={images[0]} />;
   }
 
   if (images.length === 2) {
     return (
       <div className="grid grid-cols-2 w-full h-full">
         {images.slice(0, 2).map((img) => (
-          <img
-            key={img.id}
-            src={resolveImageUrl(img.image)}
-            className="w-full h-full object-cover"
-          />
+          <Media key={img.id} item={img} />
         ))}
       </div>
     );
@@ -80,16 +96,9 @@ function AlbumCover({
   if (images.length === 3) {
     return (
       <div className="grid grid-cols-2 grid-rows-2 w-full h-full">
-        <img
-          src={resolveImageUrl(images[0].image)}
-          className="row-span-2 w-full h-full object-cover"
-        />
+        <Media item={images[0]} className="row-span-2" />
         {images.slice(1, 3).map((img) => (
-          <img
-            key={img.id}
-            src={resolveImageUrl(img.image)}
-            className="w-full h-full object-cover"
-          />
+          <Media key={img.id} item={img} />
         ))}
       </div>
     );
@@ -99,11 +108,7 @@ function AlbumCover({
   return (
     <div className="grid grid-cols-2 grid-rows-2 w-full h-full">
       {images.slice(0, 4).map((img) => (
-        <img
-          key={img.id}
-          src={resolveImageUrl(img.image)}
-          className="w-full h-full object-cover"
-        />
+        <Media key={img.id} item={img} />
       ))}
     </div>
   );
@@ -139,35 +144,8 @@ export default function GalleryEvents() {
     fetchData();
   }, []);
 
-  // Filter data
-  const soloImages = images.filter((img) => !img.album_id);
-
-  const albumsWithImages = albums
-    .map((album) => ({
-      ...album,
-      images: images.filter((img) => img.album_id === album.id),
-    }))
-    .filter((album) => album.images.length > 0); // Hide empty albums
-
-  // Handlers
-  const openAlbum = (album: (typeof albumsWithImages)[0]) => {
-    setLightboxData({
-      items: album.images,
-      startIndex: 0,
-      albumTitle: album.title,
-      albumDesc: album.description,
-    });
-  };
-
-  const openSoloImage = (img: GalleryDTO) => {
-    setLightboxData({
-      items: [img], // Treat as a list of 1 for uniformity
-      startIndex: 0,
-    });
-  };
-
   const imagesByAlbum = useMemo(() => {
-    const map = new Map<number, typeof images>();
+    const map = new Map<number, GalleryDTO[]>();
 
     for (const img of images) {
       if (img.album_id == null) continue;
@@ -180,6 +158,35 @@ export default function GalleryEvents() {
 
     return map;
   }, [images]);
+
+  const albumsWithImages = useMemo(() => {
+    return albums
+      .map((album) => ({
+        ...album,
+        images: imagesByAlbum.get(album.id) ?? [],
+      }))
+      .filter((a) => a.images.length > 0);
+  }, [albums, imagesByAlbum]);
+
+  // Filter data
+  const soloImages = images.filter((img) => !img.album_id);
+
+  // Handlers
+  const openAlbum = (album: (typeof albumsWithImages)[0]) => {
+    setLightboxData({
+      items: album.images,
+      startIndex: 0,
+      albumTitle: album.title,
+      albumDesc: album.description ?? undefined,
+    });
+  };
+
+  const openSoloImage = (img: GalleryDTO) => {
+    setLightboxData({
+      items: [img], // Treat as a list of 1 for uniformity
+      startIndex: 0,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100">
@@ -232,7 +239,7 @@ export default function GalleryEvents() {
                 <div className="flex items-center gap-4 mb-8">
                   <h3 className="text-2xl font-bold text-white flex items-center gap-2">
                     <ImageIcon className="text-yellow-500 w-6 h-6" />
-                    Отдельные кадры
+                    Отдельные моменты
                   </h3>
                   <div className="h-px bg-white/10 flex-grow" />
                 </div>
@@ -285,7 +292,6 @@ const AlbumCard = ({
 }) => {
   return (
     <motion.div
-      variants={fadeInUp}
       whileHover={{ y: -8 }}
       onClick={onClick}
       className="group cursor-pointer relative aspect-[4/5] overflow-hidden rounded-xl bg-neutral-900 shadow-xl ring-1 ring-white/10"
@@ -304,14 +310,14 @@ const AlbumCard = ({
         <div className="translate-y-4 transform transition-transform duration-300 group-hover:translate-y-0">
           <div className="flex items-center gap-2 text-yellow-500 text-xs font-bold uppercase tracking-widest mb-2">
             <Layers className="w-4 h-4" />
-            <span>Альбом • {album.images.length} фото</span>
+            <span>Альбом • {album.images.length} медиа</span>
           </div>
           <h3 className="text-xl font-bold text-white leading-tight mb-2 group-hover:text-yellow-400 transition-colors">
             {album.title}
           </h3>
           <p className="text-sm text-neutral-300 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
             {album.description ||
-              "Нажмите, чтобы просмотреть фотографии этого события."}
+              "Нажмите, чтобы просмотреть медиа этого события."}
           </p>
         </div>
       </div>
@@ -331,20 +337,28 @@ const PhotoCard = ({
 }) => {
   return (
     <motion.div
-      variants={fadeInUp}
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
       className="group relative aspect-square cursor-pointer overflow-hidden rounded-lg bg-neutral-900 border border-white/5"
     >
-      <img
-        src={`${apiUrl}${img.image}`}
-        alt="Gallery item"
-        className="h-full w-full object-cover transition-opacity duration-300 group-hover:opacity-90"
-      />
+      {img.media_type === "video" ? (
+        <video
+          src={`${apiUrl}${img.image}`}
+          className="h-full w-full object-cover"
+          muted
+          preload="metadata"
+        />
+      ) : (
+        <img
+          src={`${apiUrl}${img.image}`}
+          alt="Gallery item"
+          className="h-full w-full object-cover transition-opacity duration-300 group-hover:opacity-90"
+        />
+      )}
       <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
         <div className="bg-black/50 backdrop-blur-sm p-2 rounded-full text-white">
-          <ImageIcon size={20} />
+          <Fullscreen size={20} />
         </div>
       </div>
     </motion.div>
@@ -385,78 +399,126 @@ const Lightbox = ({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleNext, handlePrev, onClose]);
 
+  useEffect(() => {
+    setIndex(data.startIndex);
+  }, [data.startIndex, data.items]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/95 backdrop-blur-md"
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-50 flex flex-col md:flex-row bg-neutral-950/95 backdrop-blur-md overflow-hidden"
       onClick={onClose}
     >
-      {/* Close Button */}
+      {/* --- Close Button (Fixed Top Right) --- */}
       <button
         onClick={onClose}
-        className="absolute top-6 right-6 z-50 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+        className="absolute top-4 right-4 z-[60] p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
       >
-        <X size={28} />
+        <X size={24} />
       </button>
 
-      {/* Content Container */}
+      {/* --- Main Content Area (Image/Video) --- */}
       <div
-        className="relative w-full h-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center p-4 md:p-8"
-        onClick={(e) => e.stopPropagation()}
+        className="relative flex-1 flex items-center justify-center w-full h-full p-4 md:p-12"
+        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking background near image
       >
-        {/* Main Image */}
-        <div className="relative w-full h-[60vh] md:h-[80vh] flex items-center justify-center">
+        {/* Navigation Arrows (Fixed to sides of the viewport) */}
+        {isMultiple && (
+          <>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePrev();
+              }}
+              className="absolute left-2 md:left-6 z-50 p-3 text-white/50 hover:text-yellow-500 hover:bg-white/5 rounded-full transition-all"
+            >
+              <ChevronLeft size={32} />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleNext();
+              }}
+              className="absolute right-2 md:right-6 z-50 p-3 text-white/50 hover:text-yellow-500 hover:bg-white/5 rounded-full transition-all"
+            >
+              <ChevronRight size={32} />
+            </button>
+          </>
+        )}
+
+        {/* Media Container */}
+        <div className="relative w-full h-full flex items-center justify-center">
           <AnimatePresence mode="wait">
-            <motion.img
+            <motion.div
               key={currentImg.id}
-              src={`${apiUrl}${currentImg.image}`}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
-              className="max-w-full max-h-full object-contain rounded-md shadow-2xl drop-shadow-2xl"
-            />
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="w-full h-full flex items-center justify-center"
+            >
+              {currentImg.media_type === "video" ? (
+                <video
+                  src={`${apiUrl}${currentImg.image}`}
+                  controls
+                  autoPlay
+                  className="max-w-full max-h-full object-contain rounded-md shadow-2xl"
+                />
+              ) : (
+                <img
+                  src={`${apiUrl}${currentImg.image}`}
+                  alt={currentImg.description || "Gallery item"}
+                  className="max-w-full max-h-full object-contain rounded-md shadow-2xl"
+                />
+              )}
+            </motion.div>
           </AnimatePresence>
-
-          {/* Navigation Arrows */}
-          {isMultiple && (
-            <>
-              <button
-                onClick={handlePrev}
-                className="absolute left-0 md:-left-12 p-3 text-white/50 hover:text-yellow-500 hover:scale-110 transition-all"
-              >
-                <ChevronLeft size={40} />
-              </button>
-              <button
-                onClick={handleNext}
-                className="absolute right-0 md:-right-12 p-3 text-white/50 hover:text-yellow-500 hover:scale-110 transition-all"
-              >
-                <ChevronRight size={40} />
-              </button>
-            </>
-          )}
         </div>
+      </div>
 
-        {/* Info Panel (Only for Albums) */}
-        {data.albumTitle && (
-          <div className="absolute bottom-8 left-0 right-0 text-center pointer-events-none md:static md:w-[300px] md:text-left md:pl-8 md:h-[80vh] md:flex md:flex-col md:justify-end">
-            <div className="bg-black/60 backdrop-blur-md p-4 md:bg-transparent md:backdrop-blur-none md:p-0 rounded-xl inline-block pointer-events-auto">
-              <span className="text-yellow-500 font-bold uppercase tracking-widest text-xs mb-2 block">
-                {index + 1} / {data.items.length}
-              </span>
-              <h3 className="text-white text-xl font-bold mb-2">
+      {/* --- Sidebar / Info Panel --- */}
+      {/* На Desktop: колонка справа шириной 320px.
+         На Mobile: панель снизу поверх контента (или под ним, если места мало).
+      */}
+      <div
+        className="w-full md:w-[320px] md:h-full flex-shrink-0 flex flex-col justify-end md:justify-center p-6 bg-black/40 md:bg-transparent md:border-l border-white/10 backdrop-blur-sm md:backdrop-blur-none"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="space-y-4">
+          {/* Counter */}
+          <div className="text-yellow-500 font-bold uppercase tracking-widest text-xs">
+            {index + 1} / {data.items.length}
+          </div>
+
+          {/* Album Info */}
+          {data.albumTitle && (
+            <div>
+              <h3 className="text-white text-xl font-bold mb-1">
                 {data.albumTitle}
               </h3>
               {data.albumDesc && (
-                <p className="text-neutral-400 text-sm leading-relaxed max-w-md md:max-w-none mx-auto">
+                <p className="text-neutral-400 text-sm leading-relaxed line-clamp-3 md:line-clamp-none">
                   {data.albumDesc}
                 </p>
               )}
             </div>
-          </div>
-        )}
+          )}
+
+          {/* Separator if both exist */}
+          {data.albumTitle && currentImg.description && (
+            <div className="w-12 h-[1px] bg-white/20 my-2"></div>
+          )}
+
+          {/* Specific Image Description */}
+          {currentImg.description && (
+            <p className="text-neutral-300 text-sm italic">
+              {currentImg.description}
+            </p>
+          )}
+        </div>
       </div>
     </motion.div>
   );

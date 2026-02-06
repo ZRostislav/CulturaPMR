@@ -243,11 +243,14 @@ export function GallarySettings() {
   };
 
   const filteredAvailableImages = useMemo(() => {
-    return images.filter(
-      (img) =>
-        !searchTerm ||
-        img.description?.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
+    return images.filter((img) => {
+      // только без альбома
+      if (img.album_id !== null) return false;
+
+      if (!searchTerm) return true;
+
+      return img.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    });
   }, [images, searchTerm]);
 
   const imagesByAlbum = useMemo(() => {
@@ -276,33 +279,47 @@ export function GallarySettings() {
     images: GalleryDTO[];
     resolveImageUrl: (p?: string | null) => string;
   }) {
+    const Media = ({
+      item,
+      className = "",
+    }: {
+      item: GalleryDTO;
+      className?: string;
+    }) =>
+      item.media_type === "video" ? (
+        <video
+          src={resolveImageUrl(item.image)}
+          className={`w-full h-full object-cover ${className}`}
+          muted
+          playsInline
+          preload="metadata"
+        />
+      ) : (
+        <img
+          src={resolveImageUrl(item.image)}
+          className={`w-full h-full object-cover ${className}`}
+          loading="lazy"
+        />
+      );
+
     if (images.length === 0) {
       return (
         <div className="w-full h-full flex flex-col items-center justify-center text-neutral-600 gap-2">
           <ImageIcon size={32} className="opacity-50" />
-          <span className="text-xs">Нет фото</span>
+          <span className="text-xs">Нет медиа</span>
         </div>
       );
     }
 
     if (images.length === 1) {
-      return (
-        <img
-          src={resolveImageUrl(images[0].image)}
-          className="w-full h-full object-cover"
-        />
-      );
+      return <Media item={images[0]} />;
     }
 
     if (images.length === 2) {
       return (
         <div className="grid grid-cols-2 w-full h-full">
           {images.slice(0, 2).map((img) => (
-            <img
-              key={img.id}
-              src={resolveImageUrl(img.image)}
-              className="w-full h-full object-cover"
-            />
+            <Media key={img.id} item={img} />
           ))}
         </div>
       );
@@ -311,16 +328,9 @@ export function GallarySettings() {
     if (images.length === 3) {
       return (
         <div className="grid grid-cols-2 grid-rows-2 w-full h-full">
-          <img
-            src={resolveImageUrl(images[0].image)}
-            className="row-span-2 w-full h-full object-cover"
-          />
+          <Media item={images[0]} className="row-span-2" />
           {images.slice(1, 3).map((img) => (
-            <img
-              key={img.id}
-              src={resolveImageUrl(img.image)}
-              className="w-full h-full object-cover"
-            />
+            <Media key={img.id} item={img} />
           ))}
         </div>
       );
@@ -330,11 +340,7 @@ export function GallarySettings() {
     return (
       <div className="grid grid-cols-2 grid-rows-2 w-full h-full">
         {images.slice(0, 4).map((img) => (
-          <img
-            key={img.id}
-            src={resolveImageUrl(img.image)}
-            className="w-full h-full object-cover"
-          />
+          <Media key={img.id} item={img} />
         ))}
       </div>
     );
@@ -352,7 +358,7 @@ export function GallarySettings() {
               Медиа Галерея
             </h1>
             <p className="text-neutral-400 mt-2 text-sm">
-              Управляйте изображениями и альбомами вашего проекта
+              Управляйте медиа и альбомами вашего проекта
             </p>
           </div>
 
@@ -414,13 +420,13 @@ export function GallarySettings() {
               <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-10 backdrop-blur-sm">
                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                   <Upload size={18} className="text-yellow-500" /> Загрузить
-                  изображение
+                  медиа
                 </h3>
                 <div className="flex flex-col md:flex-row gap-4 items-start">
                   <div className="relative group">
                     <input
                       type="file"
-                      accept="image/*"
+                      accept="image/*,video/*"
                       id="file-upload"
                       className="hidden"
                       onChange={(e) =>
@@ -482,11 +488,20 @@ export function GallarySettings() {
                     className="group relative bg-neutral-900 border border-white/5 rounded-xl overflow-hidden shadow-lg hover:shadow-yellow-500/5 transition-all duration-300"
                   >
                     <div className="aspect-square relative overflow-hidden">
-                      <img
-                        src={resolveImageUrl(img.image)}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        alt=""
-                      />
+                      {img.media_type === "video" ? (
+                        <video
+                          src={resolveImageUrl(img.image)}
+                          className="w-full h-full object-cover"
+                          muted
+                          playsInline
+                          preload="metadata"
+                        />
+                      ) : (
+                        <img
+                          src={resolveImageUrl(img.image)}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
                       {/* Overlay Actions */}
                       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-3">
                         <Button
@@ -682,7 +697,7 @@ export function GallarySettings() {
                     onClick={() => setIsAddToAlbumModalOpen(true)}
                     className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2"
                   >
-                    <FolderPlus size={16} /> Добавить фото
+                    <FolderPlus size={16} /> Добавить медиа
                   </Button>
                 </div>
               </div>
@@ -695,10 +710,20 @@ export function GallarySettings() {
                     className="group relative bg-neutral-900 border border-white/10 rounded-lg overflow-hidden"
                   >
                     <div className="aspect-square">
-                      <img
-                        src={resolveImageUrl(img.image)}
-                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                      />
+                      {img.media_type === "video" ? (
+                        <video
+                          src={resolveImageUrl(img.image)}
+                          className="w-full h-full object-cover"
+                          muted
+                          playsInline
+                          preload="metadata"
+                        />
+                      ) : (
+                        <img
+                          src={resolveImageUrl(img.image)}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
                     </div>
 
                     {/* Hover Overlay */}
@@ -854,10 +879,20 @@ export function GallarySettings() {
                         onClick={() => handleAddExistingToAlbum(img.id)}
                         className="relative group cursor-pointer aspect-square rounded-lg overflow-hidden border border-white/5 hover:border-yellow-500 transition-colors"
                       >
-                        <img
-                          src={resolveImageUrl(img.image)}
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                        />
+                        {img.media_type === "video" ? (
+                          <video
+                            src={resolveImageUrl(img.image)}
+                            className="w-full h-full object-cover"
+                            muted
+                            playsInline
+                            preload="metadata"
+                          />
+                        ) : (
+                          <img
+                            src={resolveImageUrl(img.image)}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
                         <div className="absolute inset-0 bg-yellow-500/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                           <div className="bg-yellow-500 text-black rounded-full p-2 shadow-lg scale-0 group-hover:scale-100 transition-transform">
                             <Plus size={24} />
